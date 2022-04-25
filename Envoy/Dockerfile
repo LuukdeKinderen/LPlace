@@ -1,0 +1,1 @@
+FROM envoyproxy/envoy-dev:e874c6b035cedccb640325e5ede73a29fecd342e

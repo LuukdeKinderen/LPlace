@@ -1,0 +1,84 @@
+version: '3.4'
+
+services:
+  envoygateway:
+    build: Envoy/
+    container_name: gateway
+    ports:
+       - "9902:9902"
+       - "10000:10000"
+    volumes:
+       - ./Envoy/envoy.yaml:/etc/envoy/envoy.yaml
+    depends_on:
+      - service-advertisement
+      - service-user
+    networks:
+      - lplace-network
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: 'rabbitmq'
+    ports:
+        - 5672:5672
+        - 15672:15672
+    volumes:
+        - ~/.docker-conf/rabbitmq/data/:/var/lib/rabbitmq/
+        - ~/.docker-conf/rabbitmq/log/:/var/log/rabbitmq
+    networks:
+      - lplace-network
+
+  db:
+    image: "mcr.microsoft.com/mssql/server"
+    container_name: db
+    environment:
+        SA_PASSWORD: "Your_password123"
+        ACCEPT_EULA: "Y"
+    networks:
+      - lplace-network
+    volumes:
+      - database-data:/var/opt/mssql
+
+  service-advertisement:
+    image: ${DOCKER_REGISTRY-}serviceadvertisement
+    container_name: service-advertisement
+    build:
+      context: .
+      dockerfile: Service-Advertisement/Dockerfile
+    environment:
+      RABBITMQ_URI: "rabbitmq://rabbitmq:5672/"
+      RABBITMQ_USERNAME: guest
+      RABBITMQ_PASSWORD: guest
+    ports:
+      - '8082:80'
+    depends_on:
+      - db
+      - rabbitmq
+    networks:
+      - lplace-network
+
+  service-user:
+    image: ${DOCKER_REGISTRY-}serviceuser
+    container_name: service-user
+    build:
+      context: .
+      dockerfile: Service-User/Dockerfile
+    environment:
+        RABBITMQ_URI: "rabbitmq://rabbitmq:5672/"
+        RABBITMQ_USERNAME: guest
+        RABBITMQ_PASSWORD: guest
+    ports:
+      - '8084:80'
+    depends_on:
+      - db
+      - rabbitmq
+    networks:
+      - lplace-network
+
+
+
+volumes:
+    database-data:
+
+networks:
+  lplace-network:
+    driver: bridge
