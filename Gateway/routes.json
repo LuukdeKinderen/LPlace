@@ -1,0 +1,55 @@
+{
+  "Routes": [
+    {
+      "DownstreamPathTemplate": "/Advertisement/{path}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "service-advertisement",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/advertisement/{path}",
+      "UpstreamHttpMethod": [ "Get", "Delete" ]
+    },
+    {
+      "DownstreamPathTemplate": "/Advertisement",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "service-advertisement",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/advertisement",
+      "UpstreamHttpMethod": [ "Get", "Put", "Post" ]
+    },
+    {
+      "DownstreamPathTemplate": "/User/{path}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "service-user",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/user/{path}",
+      "UpstreamHttpMethod": [ "Get", "Delete" ]
+    },
+    {
+      "DownstreamPathTemplate": "/User",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "service-user",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/user",
+      "UpstreamHttpMethod": [ "Get" , "Put", "Post" ]
+    }
+  ],
+  "GlobalConfiguration": {
+    "BaseUrl": "https://localhost:6001"
+  }
+}

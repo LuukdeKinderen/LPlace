@@ -1,17 +1,20 @@
 version: '3.4'
 
 services:
-  envoygateway:
-    build: Envoy/
+  gateway:
+    image: ${DOCKER_REGISTRY-}gateway
+    build: 
+     context: .
+     dockerfile: Gateway/Dockerfile
     container_name: gateway
     ports:
-       - "9902:9902"
-       - "10000:10000"
-    volumes:
-       - ./Envoy/envoy.yaml:/etc/envoy/envoy.yaml
+      - '8080:80'
     depends_on:
       - service-advertisement
       - service-user
+    environment:
+        service-advertisement: "http://service-advertisement"
+        service-user: "http://service-user"
     networks:
       - lplace-network
 
