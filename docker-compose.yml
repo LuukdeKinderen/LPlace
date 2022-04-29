@@ -1,20 +1,6 @@
 version: '3.4'
 
 services:
-  #envoygateway:
-  #  build: Envoy/
-  #  container_name: gateway
-  #  ports:
-  #     - "9902:9902"
-  #     - "10000:10000"
-  #  volumes:
-  #     - ./Envoy/envoy.yaml:/etc/envoy/envoy.yaml
-  #  depends_on:
-  #    - service-advertisement
-  #    - service-user
-  #  networks:
-  #    - lplace-network
-
   gateway:
     image: ${DOCKER_REGISTRY-}gateway
     build: 

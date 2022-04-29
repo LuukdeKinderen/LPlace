@@ -1,6 +1,17 @@
 {
   "Routes": [
-
+    {
+      "DownstreamPathTemplate": "/Advertisement/{path}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "service-advertisement",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/advertisement/{path}",
+      "UpstreamHttpMethod": [ "Get", "Delete" ]
+    },
     {
       "DownstreamPathTemplate": "/Advertisement",
       "DownstreamScheme": "http",
@@ -11,7 +22,19 @@
         }
       ],
       "UpstreamPathTemplate": "/advertisement",
-      "UpstreamHttpMethod": [ "Get" ]
+      "UpstreamHttpMethod": [ "Get", "Put", "Post" ]
+    },
+    {
+      "DownstreamPathTemplate": "/User/{path}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "service-user",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/user/{path}",
+      "UpstreamHttpMethod": [ "Get", "Delete" ]
     },
     {
       "DownstreamPathTemplate": "/User",
@@ -23,7 +46,7 @@
         }
       ],
       "UpstreamPathTemplate": "/user",
-      "UpstreamHttpMethod": [ "Get" ]
+      "UpstreamHttpMethod": [ "Get" , "Put", "Post" ]
     }
   ],
   "GlobalConfiguration": {
