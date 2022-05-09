@@ -13,6 +13,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RabbitMQ-Models", "RabbitMQ
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gateway", "Gateway\Gateway.csproj", "{36C9866F-A915-43BB-B180-602B0D89A049}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Kubernetes", "Kubernetes", "{A469A9A6-93FD-49B1-A6C0-0829EA22A605}"
+	ProjectSection(SolutionItems) = preProject
+		Kubernetes\advertisement.deployment.yaml = Kubernetes\advertisement.deployment.yaml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

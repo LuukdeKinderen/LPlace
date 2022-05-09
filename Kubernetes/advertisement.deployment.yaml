@@ -1,0 +1,18 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: advertisement-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: service-advertisement
+  template:
+    metadata:
+      labels:
+        app: service-advertisement
+    spec:
+      containers:
+        - name: service-advertisement
+          image: ghcr.io/luukdekinderen/lplace/service-advertisement:main
+
