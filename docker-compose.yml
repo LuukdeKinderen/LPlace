@@ -12,9 +12,9 @@ services:
     depends_on:
       - service-advertisement
       - service-user
-    environment:
-        service-advertisement: "http://service-advertisement"
-        service-user: "http://service-user"
+    # environment:
+    #     service-advertisement: "http://service-advertisement"
+    #     service-user: "http://service-user"
     networks:
       - lplace-network
 

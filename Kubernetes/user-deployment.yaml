@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: service-user
+  template:
+    metadata:
+      labels:
+        app: service-user
+    spec:
+      containers:
+        - name: service-user
+          image: ghcr.io/luukdekinderen/lplace/service-user:main
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-user
+spec:
+  type: ClusterIP
+  selector:
+    app: service-user
+  ports:
+  - name: service-user
+    protocol: TCP
+    port: 80
+    targetPort: 80
