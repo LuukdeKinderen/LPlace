@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Service_Advertisement.Database;
+using Service_Advertisement.Database.Interfaces;
 using Service_Advertisement.DTO;
 using Service_Advertisement.Models;
 
@@ -13,133 +14,52 @@ namespace Service_Advertisement.Controllers
         private readonly AdvertisementContext _context;
 
         private readonly ILogger<AdvertisementController> _logger;
+        private readonly IAdvertisementRepository _advertisementRepository;
 
         public AdvertisementController(
             ILogger<AdvertisementController> logger,
-            AdvertisementContext context)
+            AdvertisementContext context,
+            IAdvertisementRepository advertisementRepository)
         {
             _logger = logger;
             _context = context;
+            _advertisementRepository = advertisementRepository;
         }
 
         [HttpGet("{id}")]
         public AdvertisementResponse Read(int id)
         {
-            return _context.Advertisements
-                .Where(a => a.AdvertisementID == id)
-                .Select(a => new AdvertisementResponse()
-                {
-                    AdvertisementID = a.AdvertisementID,
-                    AdvertisementAmount = a.AdvertisementAmount,
-                    AdvertisementName = a.AdvertisementName,
-
-                    User = new DTO.User()
-                    {
-                        UserId = a.UserId,
-                        FirstName = a.User.FirstName,
-                        LastName = a.User.LastName,
-                        Location = new Location()
-                        {
-                            ZipCode = a.User.ZipCode,
-                            HouseNumber = a.User.HouseNumber,
-                            HouseNumberAddition = a.User.HouseNumberAddition,
-                            City = a.User.City,
-                            StreetName = a.User.StreetName,
-                            Latitude = a.User.Latitude,
-                            Longitude = a.User.Longitude,
-                        }
-                    }
-                })
-                .Single();
+            return _advertisementRepository.GetAdvertisementById(id);
         }
 
         [HttpGet]
         public IEnumerable<AdvertisementResponse> ReadAll()
         {
-            return _context.Advertisements
-                .Select(a => new AdvertisementResponse()
-                {
-                    AdvertisementID = a.AdvertisementID,
-                    AdvertisementAmount = a.AdvertisementAmount,
-                    AdvertisementName = a.AdvertisementName,
-
-                    User = new DTO.User()
-                    {
-                        UserId = a.UserId,
-                        FirstName = a.User.FirstName,
-                        LastName = a.User.LastName,
-                        Location = new Location()
-                        {
-                            ZipCode = a.User.ZipCode,
-                            HouseNumber = a.User.HouseNumber,
-                            HouseNumberAddition = a.User.HouseNumberAddition,
-                            City = a.User.City,
-                            StreetName = a.User.StreetName,
-                            Latitude = a.User.Latitude,
-                            Longitude = a.User.Longitude,
-                        }
-                    }
-                })
-                .ToList();
+            return _advertisementRepository.GetAdvertisements();
         }
 
         [HttpPost]
-        public AdvertisementResponse Create(AdvertisementPost request)
+        public AdvertisementResponse Create(AdvertisementCreate request)
         {
-            //Get user from Database
-            Models.User u = _context.Users.Single(u => u.UserId == request.UserId);
-
-
-            //Create Advertisement object
-            Advertisement a = new Advertisement()
+            int id = _advertisementRepository.CreateAdvertisement(request);
+            if (id > 0)
             {
-                AdvertisementName = request.AdvertisementName,
-                AdvertisementAmount = request.AdvertisementAmount,
-                User = u
-            };
-
-            //add advertisement to database
-            _context.Advertisements.Add(a);
-            _context.SaveChanges();
-
-            //Get response from database
-            AdvertisementResponse response = Read(a.AdvertisementID);
-            return response;
+                return _advertisementRepository.GetAdvertisementById(id);
+            }
+            else return null;
         }
 
-
-
         [HttpPut]
-        public AdvertisementResponse Update(AdvertisementPut request)
+        public AdvertisementResponse Update(AdvertisementUpdate request)
         {
-            //Get Current advertisement
-            Advertisement advertisement = _context.Advertisements
-                .Single(a => a.AdvertisementID == request.AdvertisementID);
-
-            //Update values
-            advertisement.AdvertisementName = request.AdvertisementName;
-            advertisement.AdvertisementAmount = request.AdvertisementAmount;
-           
-            //update database
-            _context.Advertisements.Update(advertisement);
-            _context.SaveChanges();
-
-            //Get response from database
-            AdvertisementResponse response = Read(request.AdvertisementID);
-            return response;
+            _advertisementRepository.UpdateAdvertisement(request);
+            return _advertisementRepository.GetAdvertisementById(request.AdvertisementID);
         }
 
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
-            //Get advertisement by id
-            Advertisement advertisement = _context.Advertisements
-                .Single(a => a.AdvertisementID == id);
-
-
-            //remove advertisement
-            _context.Advertisements.Remove(advertisement);
-            _context.SaveChanges();
+            _advertisementRepository.DeleteAdvertisement(id);
         }
 
     }

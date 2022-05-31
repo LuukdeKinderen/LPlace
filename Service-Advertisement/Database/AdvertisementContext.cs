@@ -1,9 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Service_Advertisement.Database.Interfaces;
 using Service_Advertisement.Models;
 
 namespace Service_Advertisement.Database
 {
-    public class AdvertisementContext : DbContext
+    public class AdvertisementContext : DbContext, IAdvertisementContext
     {
         protected readonly IConfiguration configuration;
         public AdvertisementContext(IConfiguration configuration)

@@ -1,0 +1,19 @@
+﻿using Service_Advertisement.DTO;
+using Service_Advertisement.Models;
+
+namespace Service_Advertisement.Database.Interfaces
+{
+    public interface IAdvertisementRepository
+    {
+        public int CreateAdvertisement(AdvertisementCreate advertisement);
+        public IEnumerable<AdvertisementResponse> GetAdvertisements();
+        public AdvertisementResponse GetAdvertisementById(int id);
+        public void UpdateAdvertisement(AdvertisementUpdate advertisement);
+        public void DeleteAdvertisement(int id);
+
+
+        public void CreateUser(User user);
+        public void UpdateUser(User user);
+        public void DeleteUser(int userId);
+    }
+}

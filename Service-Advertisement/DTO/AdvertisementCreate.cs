@@ -1,9 +1,10 @@
 ﻿namespace Service_Advertisement.DTO
 {
-    public class AdvertisementPut
+    public class AdvertisementCreate
     {
-        public int AdvertisementID { get; set; }
         public string AdvertisementName { get; set; }
         public double AdvertisementAmount { get; set; }
+
+        public int UserId { get; set; }
     }
 }

@@ -3,10 +3,14 @@ using Microsoft.EntityFrameworkCore;
 using Service_Advertisement;
 using Service_Advertisement.Consumers;
 using Service_Advertisement.Database;
+using Service_Advertisement.Database.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
 //Database
+builder.Services.AddTransient<IAdvertisementContext, AdvertisementContext>();
+builder.Services.AddTransient<IAdvertisementRepository, AdvertisementRepository>();
+
 var connection = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<AdvertisementContext>(options => options.UseSqlServer(connection));
 
@@ -22,10 +26,11 @@ builder.Services.AddMassTransit(config =>
     {
         cfg.Host("amqp://guest:guest@rabbitmq:5672");
 
-        cfg.ReceiveEndpoint("user-queue", c =>
-        {
-            c.ConfigureConsumer<UserConsumer>(ctx);
-        }); 
+        cfg.ConfigureEndpoints(ctx);
+        //cfg.ReceiveEndpoint("user-queue", c =>
+        //{
+        //    c.ConfigureConsumer<UserConsumer>(ctx);
+        //}); 
     });
 });
 
