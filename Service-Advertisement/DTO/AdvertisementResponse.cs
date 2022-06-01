@@ -10,6 +10,7 @@
         public int AdvertisementID { get; set; }
         public string AdvertisementName { get; set; }
         public double AdvertisementAmount { get; set; }
+        public DateTime ValidUntil { get; set; }
 
         public UserDTO User { get; set; }
     }

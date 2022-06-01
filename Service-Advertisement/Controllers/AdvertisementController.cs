@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Service_Advertisement.Database;
 using Service_Advertisement.Database.Interfaces;
 using Service_Advertisement.DTO;
+using Service_Advertisement.DTO.Interfaces;
 using Service_Advertisement.Models;
 
 namespace Service_Advertisement.Controllers
@@ -11,31 +12,34 @@ namespace Service_Advertisement.Controllers
     [Route("[controller]")]
     public class AdvertisementController : ControllerBase
     {
-        private readonly AdvertisementContext _context;
 
         private readonly ILogger<AdvertisementController> _logger;
         private readonly IAdvertisementRepository _advertisementRepository;
+        private readonly IAdvertisementResponseFactory _advertisementResponseFactory;
 
         public AdvertisementController(
             ILogger<AdvertisementController> logger,
-            AdvertisementContext context,
-            IAdvertisementRepository advertisementRepository)
+            IAdvertisementRepository advertisementRepository,
+            IAdvertisementResponseFactory advertisementResponseFactory)
         {
             _logger = logger;
-            _context = context;
             _advertisementRepository = advertisementRepository;
+            _advertisementResponseFactory = advertisementResponseFactory;
         }
 
         [HttpGet("{id}")]
         public AdvertisementResponse Read(int id)
         {
-            return _advertisementRepository.GetAdvertisementById(id);
+            Advertisement advertisement = _advertisementRepository.GetAdvertisementById(id);
+
+            return _advertisementResponseFactory.GetAdvertisementResponse(advertisement);
         }
 
         [HttpGet]
         public IEnumerable<AdvertisementResponse> ReadAll()
         {
-            return _advertisementRepository.GetAdvertisements();
+
+            return _advertisementRepository.GetAdvertisements().Select(a => _advertisementResponseFactory.GetAdvertisementResponse(a));
         }
 
         [HttpPost]
@@ -44,7 +48,8 @@ namespace Service_Advertisement.Controllers
             int id = _advertisementRepository.CreateAdvertisement(request);
             if (id > 0)
             {
-                return _advertisementRepository.GetAdvertisementById(id);
+                Advertisement advertisement = _advertisementRepository.GetAdvertisementById(id);
+                return _advertisementResponseFactory.GetAdvertisementResponse(advertisement);
             }
             else return null;
         }
@@ -52,8 +57,14 @@ namespace Service_Advertisement.Controllers
         [HttpPut]
         public AdvertisementResponse Update(AdvertisementUpdate request)
         {
+            ////TODO GET FROM JWT
+            //User u = _advertisementRepository.GetUserById(1);
+
+            //_advertisementRepository.GetAdvertisementById(request.AdvertisementID);
+
             _advertisementRepository.UpdateAdvertisement(request);
-            return _advertisementRepository.GetAdvertisementById(request.AdvertisementID);
+            Advertisement advertisement = _advertisementRepository.GetAdvertisementById(request.AdvertisementID);
+            return _advertisementResponseFactory.GetAdvertisementResponse(advertisement);
         }
 
         [HttpDelete("{id}")]

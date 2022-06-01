@@ -4,8 +4,13 @@ using Service_Advertisement;
 using Service_Advertisement.Consumers;
 using Service_Advertisement.Database;
 using Service_Advertisement.Database.Interfaces;
+using Service_Advertisement.DTO;
+using Service_Advertisement.DTO.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
+
+//Services
+builder.Services.AddTransient<IAdvertisementResponseFactory, AdvertisementResponseFactory>();
 
 //Database
 builder.Services.AddTransient<IAdvertisementContext, AdvertisementContext>();

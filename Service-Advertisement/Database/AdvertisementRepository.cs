@@ -42,31 +42,10 @@ namespace Service_Advertisement.Database
             return a.AdvertisementID;
         }
 
-        public AdvertisementResponse GetAdvertisementById(int id)
+        public Advertisement GetAdvertisementById(int id)
         {
-            AdvertisementResponse? response =  _context.Advertisements.Where(a => a.AdvertisementID == id).Select(a => new AdvertisementResponse()
-            {
-                AdvertisementID = a.AdvertisementID,
-                AdvertisementAmount = a.AdvertisementAmount,
-                AdvertisementName = a.AdvertisementName,
 
-                User = new DTO.UserDTO()
-                {
-                    UserId = a.UserId,
-                    FirstName = a.User.FirstName,
-                    LastName = a.User.LastName,
-                    Location = new Location()
-                    {
-                        ZipCode = a.User.ZipCode,
-                        HouseNumber = a.User.HouseNumber,
-                        HouseNumberAddition = a.User.HouseNumberAddition,
-                        City = a.User.City,
-                        StreetName = a.User.StreetName,
-                        Latitude = a.User.Latitude,
-                        Longitude = a.User.Longitude,
-                    }
-                }
-            }).Single();
+            Advertisement response = _context.Advertisements.Where(a => a.AdvertisementID == id).SingleOrDefault();
             if (response == null)
             {
                 _logger.LogError($"Advertisement {id} does not exist");
@@ -74,31 +53,9 @@ namespace Service_Advertisement.Database
             return response;
         }
 
-        public IEnumerable<AdvertisementResponse> GetAdvertisements()
+        public IEnumerable<Advertisement> GetAdvertisements()
         {
-            return _context.Advertisements.Select(a => new AdvertisementResponse()
-            {
-                AdvertisementID = a.AdvertisementID,
-                AdvertisementAmount = a.AdvertisementAmount,
-                AdvertisementName = a.AdvertisementName,
-
-                User = new DTO.UserDTO()
-                {
-                    UserId = a.UserId,
-                    FirstName = a.User.FirstName,
-                    LastName = a.User.LastName,
-                    Location = new Location()
-                    {
-                        ZipCode = a.User.ZipCode,
-                        HouseNumber = a.User.HouseNumber,
-                        HouseNumberAddition = a.User.HouseNumberAddition,
-                        City = a.User.City,
-                        StreetName = a.User.StreetName,
-                        Latitude = a.User.Latitude,
-                        Longitude = a.User.Longitude,
-                    }
-                }
-            }).ToList();
+            return _context.Advertisements.ToList();
         }
 
         public void UpdateAdvertisement(AdvertisementUpdate advertisement)
@@ -151,6 +108,18 @@ namespace Service_Advertisement.Database
         public void DeleteUser(int userId)
         {
             throw new NotImplementedException();
+        }
+
+        public User GetUserById(int userId)
+        {
+            //Get advertisement
+            User? u = _context.Users.Where(u => u.UserId == userId).SingleOrDefault();
+
+            if (u == null)
+            {
+                _logger.LogError($"Could not delete advertisement. Advertisement {userId} does not exist");
+            }
+            return u;
         }
     }
 }
