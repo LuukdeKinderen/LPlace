@@ -18,11 +18,11 @@ namespace Service_Advertisement.Controllers
         private readonly IAdvertisementResponseFactory _advertisementResponseFactory;
 
         public AdvertisementController(
-            ILogger<AdvertisementController> logger,
+            //ILogger<AdvertisementController> logger,
             IAdvertisementRepository advertisementRepository,
             IAdvertisementResponseFactory advertisementResponseFactory)
         {
-            _logger = logger;
+            //_logger = logger;
             _advertisementRepository = advertisementRepository;
             _advertisementResponseFactory = advertisementResponseFactory;
         }
