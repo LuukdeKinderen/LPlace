@@ -5,7 +5,7 @@ namespace Service_Advertisement.Database.Interfaces
 {
     public interface IAdvertisementRepository
     {
-        public int CreateAdvertisement(AdvertisementCreate advertisement);
+        public int CreateAdvertisement(AdvertisementCreate advertisement, int userId);
         public IEnumerable<Advertisement> GetAdvertisements();
         public Advertisement GetAdvertisementById(int id);
         public void UpdateAdvertisement(AdvertisementUpdate advertisement);

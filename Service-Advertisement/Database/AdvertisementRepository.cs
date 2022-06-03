@@ -15,14 +15,20 @@ namespace Service_Advertisement.Database
             _logger = logger;
         }
 
-        public int CreateAdvertisement(AdvertisementCreate advertisement)
+        /// <summary>
+        /// Creates Advertisement for users
+        /// </summary>
+        /// <param name="advertisement">Advertisement info</param>
+        /// <param name="userId">The id of the user</param>
+        /// <returns>Id of the new Advertisement, -1 if User does not exist</returns>
+        public int CreateAdvertisement(AdvertisementCreate advertisement, int userId)
         {
             //Get user from Database
-            User? u = _context.Users.Where(u => u.UserId == advertisement.UserId).SingleOrDefault();
+            User? u = _context.Users.Where(u => u.UserId == userId).SingleOrDefault();
 
             if (u == null)
             {
-                _logger.LogError($"Could not create advertisement. User {advertisement.UserId} does not exist");
+                _logger.LogError($"Could not create advertisement. User {userId} does not exist");
                 return -1;
             }
 

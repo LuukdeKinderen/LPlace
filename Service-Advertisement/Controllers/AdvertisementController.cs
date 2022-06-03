@@ -28,49 +28,71 @@ namespace Service_Advertisement.Controllers
         }
 
         [HttpGet("{id}")]
-        public AdvertisementResponse Read(int id)
+        public IActionResult Read(int id)
         {
             Advertisement advertisement = _advertisementRepository.GetAdvertisementById(id);
-
-            return _advertisementResponseFactory.GetAdvertisementResponse(advertisement);
+            if (advertisement == null)
+            {
+                return new BadRequestObjectResult($"Advertisement with Id: {id} does not exist");
+            }
+            return new OkObjectResult(_advertisementResponseFactory.GetAdvertisementResponse(advertisement));            
         }
 
         [HttpGet]
-        public IEnumerable<AdvertisementResponse> ReadAll()
+        public IActionResult ReadAll()
         {
-
-            return _advertisementRepository.GetAdvertisements().Select(a => _advertisementResponseFactory.GetAdvertisementResponse(a));
+            return new OkObjectResult(_advertisementRepository.GetAdvertisements().Select(a => _advertisementResponseFactory.GetAdvertisementResponse(a)));
         }
 
         [HttpPost]
-        public AdvertisementResponse Create(AdvertisementCreate request)
+        public IActionResult Create(AdvertisementCreate request, int userId)
         {
-            int id = _advertisementRepository.CreateAdvertisement(request);
+            //TODO: Get userId from JWT
+            int id = _advertisementRepository.CreateAdvertisement(request, userId);
             if (id > 0)
             {
                 Advertisement advertisement = _advertisementRepository.GetAdvertisementById(id);
-                return _advertisementResponseFactory.GetAdvertisementResponse(advertisement);
+                return new OkObjectResult(_advertisementResponseFactory.GetAdvertisementResponse(advertisement));
             }
-            else return null;
+            else return new BadRequestObjectResult($"User: {userId} does not exist");
         }
 
         [HttpPut]
-        public AdvertisementResponse Update(AdvertisementUpdate request)
+        public IActionResult Update(AdvertisementUpdate request, int userId)
         {
-            ////TODO GET FROM JWT
-            //User u = _advertisementRepository.GetUserById(1);
-
-            //_advertisementRepository.GetAdvertisementById(request.AdvertisementID);
-
-            _advertisementRepository.UpdateAdvertisement(request);
+            //TODO: Get userId from JWT
             Advertisement advertisement = _advertisementRepository.GetAdvertisementById(request.AdvertisementID);
-            return _advertisementResponseFactory.GetAdvertisementResponse(advertisement);
+            if (advertisement == null)
+            {
+                return new BadRequestObjectResult($"Could not update Advertisement, advertisement with Id:'{request.AdvertisementID}' does not exist");
+            }
+            if (advertisement.UserId != userId)
+            {
+                return new BadRequestObjectResult($"User:'{userId}' is not authorised to update advertisement:'{request.AdvertisementID}'");
+            }
+            
+            _advertisementRepository.UpdateAdvertisement(request);
+            Advertisement updatedAdvertisement = _advertisementRepository.GetAdvertisementById(request.AdvertisementID);
+            return new OkObjectResult(_advertisementResponseFactory.GetAdvertisementResponse(updatedAdvertisement));
         }
 
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public IActionResult Delete(int id, int userId)
         {
+            //TODO: Get userId from JWT
+            Advertisement advertisement = _advertisementRepository.GetAdvertisementById(id);
+            if (advertisement == null)
+            {
+                return new BadRequestObjectResult($"Could not delete Advertisement, advertisement with Id:'{id}' does not exist");
+            }
+            if (advertisement.UserId != userId)
+            {
+                return new BadRequestObjectResult($"User:'{userId}' is not authorised to delete advertisement:'{id}'");
+            }
+
             _advertisementRepository.DeleteAdvertisement(id);
+
+            return new OkObjectResult($"Succesfully deleted advertisement: '{id}'");
         }
 
     }
