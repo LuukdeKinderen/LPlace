@@ -12,9 +12,9 @@ services:
     depends_on:
       - service-advertisement
       - service-user
-    environment:
-        service-advertisement: "http://service-advertisement"
-        service-user: "http://service-user"
+    # environment:
+    #     service-advertisement: "http://service-advertisement"
+    #     service-user: "http://service-user"
     networks:
       - lplace-network
 
@@ -38,6 +38,8 @@ services:
         ACCEPT_EULA: "Y"
     networks:
       - lplace-network
+    ports:
+      - "1433:1433"
     volumes:
       - database-data:/var/opt/mssql
 

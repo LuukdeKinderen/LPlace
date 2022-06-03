@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Service_Advertisement.Database;
+using Service_Advertisement.Database.Interfaces;
 using Service_Advertisement.DTO;
+using Service_Advertisement.DTO.Interfaces;
 using Service_Advertisement.Models;
 
 namespace Service_Advertisement.Controllers
@@ -10,136 +12,87 @@ namespace Service_Advertisement.Controllers
     [Route("[controller]")]
     public class AdvertisementController : ControllerBase
     {
-        private readonly AdvertisementContext _context;
 
         private readonly ILogger<AdvertisementController> _logger;
+        private readonly IAdvertisementRepository _advertisementRepository;
+        private readonly IAdvertisementResponseFactory _advertisementResponseFactory;
 
         public AdvertisementController(
-            ILogger<AdvertisementController> logger,
-            AdvertisementContext context)
+            //ILogger<AdvertisementController> logger,
+            IAdvertisementRepository advertisementRepository,
+            IAdvertisementResponseFactory advertisementResponseFactory)
         {
-            _logger = logger;
-            _context = context;
+            //_logger = logger;
+            _advertisementRepository = advertisementRepository;
+            _advertisementResponseFactory = advertisementResponseFactory;
         }
 
         [HttpGet("{id}")]
-        public AdvertisementResponse Read(int id)
+        public IActionResult Read(int id)
         {
-            return _context.Advertisements
-                .Where(a => a.AdvertisementID == id)
-                .Select(a => new AdvertisementResponse()
-                {
-                    AdvertisementID = a.AdvertisementID,
-                    AdvertisementAmount = a.AdvertisementAmount,
-                    AdvertisementName = a.AdvertisementName,
-
-                    User = new DTO.User()
-                    {
-                        UserId = a.UserId,
-                        FirstName = a.User.FirstName,
-                        LastName = a.User.LastName,
-                        Location = new Location()
-                        {
-                            ZipCode = a.User.ZipCode,
-                            HouseNumber = a.User.HouseNumber,
-                            HouseNumberAddition = a.User.HouseNumberAddition,
-                            City = a.User.City,
-                            StreetName = a.User.StreetName,
-                            Latitude = a.User.Latitude,
-                            Longitude = a.User.Longitude,
-                        }
-                    }
-                })
-                .Single();
+            Advertisement advertisement = _advertisementRepository.GetAdvertisementById(id);
+            if (advertisement == null)
+            {
+                return new BadRequestObjectResult($"Advertisement with Id: {id} does not exist");
+            }
+            return new OkObjectResult(_advertisementResponseFactory.GetAdvertisementResponse(advertisement));            
         }
 
         [HttpGet]
-        public IEnumerable<AdvertisementResponse> ReadAll()
+        public IActionResult ReadAll()
         {
-            return _context.Advertisements
-                .Select(a => new AdvertisementResponse()
-                {
-                    AdvertisementID = a.AdvertisementID,
-                    AdvertisementAmount = a.AdvertisementAmount,
-                    AdvertisementName = a.AdvertisementName,
-
-                    User = new DTO.User()
-                    {
-                        UserId = a.UserId,
-                        FirstName = a.User.FirstName,
-                        LastName = a.User.LastName,
-                        Location = new Location()
-                        {
-                            ZipCode = a.User.ZipCode,
-                            HouseNumber = a.User.HouseNumber,
-                            HouseNumberAddition = a.User.HouseNumberAddition,
-                            City = a.User.City,
-                            StreetName = a.User.StreetName,
-                            Latitude = a.User.Latitude,
-                            Longitude = a.User.Longitude,
-                        }
-                    }
-                })
-                .ToList();
+            return new OkObjectResult(_advertisementRepository.GetAdvertisements().Select(a => _advertisementResponseFactory.GetAdvertisementResponse(a)));
         }
 
         [HttpPost]
-        public AdvertisementResponse Create(AdvertisementPost request)
+        public IActionResult Create(AdvertisementCreate request, int userId)
         {
-            //Get user from Database
-            Models.User u = _context.Users.Single(u => u.UserId == request.UserId);
-
-
-            //Create Advertisement object
-            Advertisement a = new Advertisement()
+            //TODO: Get userId from JWT
+            int id = _advertisementRepository.CreateAdvertisement(request, userId);
+            if (id > 0)
             {
-                AdvertisementName = request.AdvertisementName,
-                AdvertisementAmount = request.AdvertisementAmount,
-                User = u
-            };
-
-            //add advertisement to database
-            _context.Advertisements.Add(a);
-            _context.SaveChanges();
-
-            //Get response from database
-            AdvertisementResponse response = Read(a.AdvertisementID);
-            return response;
+                Advertisement advertisement = _advertisementRepository.GetAdvertisementById(id);
+                return new OkObjectResult(_advertisementResponseFactory.GetAdvertisementResponse(advertisement));
+            }
+            else return new BadRequestObjectResult($"User: {userId} does not exist");
         }
 
-
-
         [HttpPut]
-        public AdvertisementResponse Update(AdvertisementPut request)
+        public IActionResult Update(AdvertisementUpdate request, int userId)
         {
-            //Get Current advertisement
-            Advertisement advertisement = _context.Advertisements
-                .Single(a => a.AdvertisementID == request.AdvertisementID);
-
-            //Update values
-            advertisement.AdvertisementName = request.AdvertisementName;
-            advertisement.AdvertisementAmount = request.AdvertisementAmount;
-           
-            //update database
-            _context.Advertisements.Update(advertisement);
-            _context.SaveChanges();
-
-            //Get response from database
-            AdvertisementResponse response = Read(request.AdvertisementID);
-            return response;
+            //TODO: Get userId from JWT
+            Advertisement advertisement = _advertisementRepository.GetAdvertisementById(request.AdvertisementID);
+            if (advertisement == null)
+            {
+                return new BadRequestObjectResult($"Could not update Advertisement, advertisement with Id:'{request.AdvertisementID}' does not exist");
+            }
+            if (advertisement.UserId != userId)
+            {
+                return new BadRequestObjectResult($"User:'{userId}' is not authorised to update advertisement:'{request.AdvertisementID}'");
+            }
+            
+            _advertisementRepository.UpdateAdvertisement(request);
+            Advertisement updatedAdvertisement = _advertisementRepository.GetAdvertisementById(request.AdvertisementID);
+            return new OkObjectResult(_advertisementResponseFactory.GetAdvertisementResponse(updatedAdvertisement));
         }
 
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public IActionResult Delete(int id, int userId)
         {
-            //Get advertisement by id
-            Advertisement advertisement = _context.Advertisements
-                .Single(a => a.AdvertisementID == id);
+            //TODO: Get userId from JWT
+            Advertisement advertisement = _advertisementRepository.GetAdvertisementById(id);
+            if (advertisement == null)
+            {
+                return new BadRequestObjectResult($"Could not delete Advertisement, advertisement with Id:'{id}' does not exist");
+            }
+            if (advertisement.UserId != userId)
+            {
+                return new BadRequestObjectResult($"User:'{userId}' is not authorised to delete advertisement:'{id}'");
+            }
 
+            _advertisementRepository.DeleteAdvertisement(id);
 
-            //remove advertisement
-            _context.Advertisements.Remove(advertisement);
-            _context.SaveChanges();
+            return new OkObjectResult($"Succesfully deleted advertisement: '{id}'");
         }
 
     }

@@ -16,3 +16,18 @@ spec:
         - name: service-advertisement
           image: ghcr.io/luukdekinderen/lplace/service-advertisement:main
 
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-advertisement
+spec:
+  type: ClusterIP
+  selector:
+    app: service-advertisement
+  ports:
+  - name: service-advertisement
+    protocol: TCP
+    port: 80
+    targetPort: 80

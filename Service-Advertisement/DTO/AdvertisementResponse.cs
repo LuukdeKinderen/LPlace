@@ -1,6 +1,4 @@
-﻿using Service_Advertisement.Models;
-
-namespace Service_Advertisement.DTO
+﻿namespace Service_Advertisement.DTO
 {
     public class AdvertisementResponse
     {
@@ -12,10 +10,11 @@ namespace Service_Advertisement.DTO
         public int AdvertisementID { get; set; }
         public string AdvertisementName { get; set; }
         public double AdvertisementAmount { get; set; }
+        public DateTime ValidUntil { get; set; }
 
-        public User User { get; set; }
+        public UserDTO User { get; set; }
     }
-    public class User
+    public class UserDTO
     {
         public int UserId { get; set; }
         public string FirstName { get; set; }

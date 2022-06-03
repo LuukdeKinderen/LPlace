@@ -13,10 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RabbitMQ-Models", "RabbitMQ
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gateway", "Gateway\Gateway.csproj", "{36C9866F-A915-43BB-B180-602B0D89A049}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Kubernetes", "Kubernetes", "{A469A9A6-93FD-49B1-A6C0-0829EA22A605}"
-	ProjectSection(SolutionItems) = preProject
-		Kubernetes\advertisement.deployment.yaml = Kubernetes\advertisement.deployment.yaml
-	EndProjectSection
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Service-Advertisement-Test", "Service-Advertisement-Test\Service-Advertisement-Test.csproj", "{D013E937-E87B-453C-9030-58D398EE2685}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -44,6 +41,10 @@ Global
 		{36C9866F-A915-43BB-B180-602B0D89A049}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{36C9866F-A915-43BB-B180-602B0D89A049}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{36C9866F-A915-43BB-B180-602B0D89A049}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D013E937-E87B-453C-9030-58D398EE2685}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D013E937-E87B-453C-9030-58D398EE2685}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D013E937-E87B-453C-9030-58D398EE2685}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D013E937-E87B-453C-9030-58D398EE2685}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
