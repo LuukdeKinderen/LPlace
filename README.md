@@ -1,2 +1,2 @@
 # LPlace
-an online record marketplace
+an online record marketplace.
