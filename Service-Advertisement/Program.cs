@@ -29,13 +29,9 @@ builder.Services.AddMassTransit(config =>
     config.AddConsumer<UserConsumer>();
     config.UsingRabbitMq((ctx, cfg) =>
     {
-        cfg.Host("amqp://guest:guest@rabbitmq:5672");
+        cfg.Host($"amqp://{Global.RabbitMqUsername}:{Global.RabbitMqPassword}@rabbitmq:5672");
 
         cfg.ConfigureEndpoints(ctx);
-        //cfg.ReceiveEndpoint("user-queue", c =>
-        //{
-        //    c.ConfigureConsumer<UserConsumer>(ctx);
-        //}); 
     });
 });
 

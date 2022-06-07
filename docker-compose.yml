@@ -21,6 +21,9 @@ services:
   rabbitmq:
     image: rabbitmq:3-management-alpine
     container_name: 'rabbitmq'
+    environment:
+        RABBITMQ_DEFAULT_USER: sa
+        RABBITMQ_DEFAULT_PASS: admin
     ports:
         - 5672:5672
         - 15672:15672
@@ -50,9 +53,8 @@ services:
       context: .
       dockerfile: Service-Advertisement/Dockerfile
     environment:
-      RABBITMQ_URI: "rabbitmq://rabbitmq:5672/"
-      RABBITMQ_USERNAME: guest
-      RABBITMQ_PASSWORD: guest
+      RABBITMQ_USERNAME: sa
+      RABBITMQ_PASSWORD: admin
     ports:
       - '8082:80'
     depends_on:
@@ -68,9 +70,8 @@ services:
       context: .
       dockerfile: Service-User/Dockerfile
     environment:
-        RABBITMQ_URI: "rabbitmq://rabbitmq:5672/"
-        RABBITMQ_USERNAME: guest
-        RABBITMQ_PASSWORD: guest
+        RABBITMQ_USERNAME: sa
+        RABBITMQ_PASSWORD: admin
     ports:
       - '8084:80'
     depends_on:
