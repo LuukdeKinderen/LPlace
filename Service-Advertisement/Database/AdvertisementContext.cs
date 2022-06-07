@@ -15,7 +15,7 @@ namespace Service_Advertisement.Database
         protected override void OnConfiguring(DbContextOptionsBuilder options)
         {
             // connect to sql server with connection string from app settings
-            options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
+            options.UseSqlServer(Global.DatabaseConnectionString);
         }
 
         public DbSet<Advertisement> Advertisements { get; set; }

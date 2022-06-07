@@ -1,12 +1,12 @@
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
+using Service_User;
 using Service_User.Database;
 
 var builder = WebApplication.CreateBuilder(args);
 
 //Database
-var connection = builder.Configuration.GetConnectionString("DefaultConnection");
-builder.Services.AddDbContext<UserContext>(options => options.UseSqlServer(connection));
+builder.Services.AddDbContext<UserContext>(options => options.UseSqlServer(Global.DatabaseConnectionString));
 
 //Swagger
 builder.Services.AddEndpointsApiExplorer();
@@ -17,7 +17,7 @@ builder.Services.AddMassTransit(config =>
 {
     config.UsingRabbitMq((ctx, cfg) =>
     {
-        cfg.Host("amqp://guest:guest@rabbitmq:5672");
+        cfg.Host($"amqp://{Global.RabbitMqUsername}:{Global.RabbitMqPassword}@rabbitmq:5672");
     });
 });
 

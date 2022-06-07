@@ -21,6 +21,9 @@ services:
   rabbitmq:
     image: rabbitmq:3-management-alpine
     container_name: 'rabbitmq'
+    environment:
+        RABBITMQ_DEFAULT_USER: sa
+        RABBITMQ_DEFAULT_PASS: admin
     ports:
         - 5672:5672
         - 15672:15672
@@ -30,18 +33,18 @@ services:
     networks:
       - lplace-network
 
-  db:
+  db-advertisement:
     image: "mcr.microsoft.com/mssql/server"
-    container_name: db
+    container_name: db-advertisement
     environment:
-        SA_PASSWORD: "Your_password123"
+        SA_PASSWORD: "My_password123"
         ACCEPT_EULA: "Y"
     networks:
       - lplace-network
     ports:
-      - "1433:1433"
+      - "1434:1433"
     volumes:
-      - database-data:/var/opt/mssql
+      - database-data-advertisement:/var/opt/mssql
 
   service-advertisement:
     image: ${DOCKER_REGISTRY-}serviceadvertisement
@@ -50,9 +53,11 @@ services:
       context: .
       dockerfile: Service-Advertisement/Dockerfile
     environment:
-      RABBITMQ_URI: "rabbitmq://rabbitmq:5672/"
-      RABBITMQ_USERNAME: guest
-      RABBITMQ_PASSWORD: guest
+      RABBITMQ_USERNAME: sa
+      RABBITMQ_PASSWORD: admin
+      DATABASE_SERVER: db-advertisement
+      DATABASE_PASSWORD: My_password123
+      DATABASE_PORT: "1433"
     ports:
       - '8082:80'
     depends_on:
@@ -61,6 +66,19 @@ services:
     networks:
       - lplace-network
 
+  db-user:
+    image: "mcr.microsoft.com/mssql/server"
+    container_name: db-user
+    environment:
+        SA_PASSWORD: "My_Other_password123"
+        ACCEPT_EULA: "Y"
+    networks:
+      - lplace-network
+    ports:
+      - "1433:1433"
+    volumes:
+      - database-data-user:/var/opt/mssql
+
   service-user:
     image: ${DOCKER_REGISTRY-}serviceuser
     container_name: service-user
@@ -68,9 +86,11 @@ services:
       context: .
       dockerfile: Service-User/Dockerfile
     environment:
-        RABBITMQ_URI: "rabbitmq://rabbitmq:5672/"
-        RABBITMQ_USERNAME: guest
-        RABBITMQ_PASSWORD: guest
+        RABBITMQ_USERNAME: sa
+        RABBITMQ_PASSWORD: admin
+        DATABASE_SERVER: db-user
+        DATABASE_PASSWORD: My_Other_password123
+        DATABASE_PORT: "1433"
     ports:
       - '8084:80'
     depends_on:
@@ -82,7 +102,8 @@ services:
 
 
 volumes:
-    database-data:
+    database-data-user:
+    database-data-advertisement:
 
 networks:
   lplace-network:

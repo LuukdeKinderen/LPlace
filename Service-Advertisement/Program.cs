@@ -16,8 +16,7 @@ builder.Services.AddTransient<IAdvertisementResponseFactory, AdvertisementRespon
 builder.Services.AddTransient<IAdvertisementContext, AdvertisementContext>();
 builder.Services.AddTransient<IAdvertisementRepository, AdvertisementRepository>();
 
-var connection = builder.Configuration.GetConnectionString("DefaultConnection");
-builder.Services.AddDbContext<AdvertisementContext>(options => options.UseSqlServer(connection));
+builder.Services.AddDbContext<AdvertisementContext>(options => options.UseSqlServer(Global.DatabaseConnectionString));
 
 //Swagger
 builder.Services.AddEndpointsApiExplorer();
@@ -29,13 +28,9 @@ builder.Services.AddMassTransit(config =>
     config.AddConsumer<UserConsumer>();
     config.UsingRabbitMq((ctx, cfg) =>
     {
-        cfg.Host("amqp://guest:guest@rabbitmq:5672");
+        cfg.Host($"amqp://{Global.RabbitMqUsername}:{Global.RabbitMqPassword}@rabbitmq:5672");
 
         cfg.ConfigureEndpoints(ctx);
-        //cfg.ReceiveEndpoint("user-queue", c =>
-        //{
-        //    c.ConfigureConsumer<UserConsumer>(ctx);
-        //}); 
     });
 });
 
