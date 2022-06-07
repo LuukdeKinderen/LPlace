@@ -16,8 +16,7 @@ builder.Services.AddTransient<IAdvertisementResponseFactory, AdvertisementRespon
 builder.Services.AddTransient<IAdvertisementContext, AdvertisementContext>();
 builder.Services.AddTransient<IAdvertisementRepository, AdvertisementRepository>();
 
-var connection = builder.Configuration.GetConnectionString("DefaultConnection");
-builder.Services.AddDbContext<AdvertisementContext>(options => options.UseSqlServer(connection));
+builder.Services.AddDbContext<AdvertisementContext>(options => options.UseSqlServer(Global.DatabaseConnectionString));
 
 //Swagger
 builder.Services.AddEndpointsApiExplorer();

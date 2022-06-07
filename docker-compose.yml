@@ -33,18 +33,18 @@ services:
     networks:
       - lplace-network
 
-  db:
+  db-advertisement:
     image: "mcr.microsoft.com/mssql/server"
-    container_name: db
+    container_name: db-advertisement
     environment:
-        SA_PASSWORD: "Your_password123"
+        SA_PASSWORD: "My_password123"
         ACCEPT_EULA: "Y"
     networks:
       - lplace-network
     ports:
-      - "1433:1433"
+      - "1434:1433"
     volumes:
-      - database-data:/var/opt/mssql
+      - database-data-advertisement:/var/opt/mssql
 
   service-advertisement:
     image: ${DOCKER_REGISTRY-}serviceadvertisement
@@ -55,6 +55,9 @@ services:
     environment:
       RABBITMQ_USERNAME: sa
       RABBITMQ_PASSWORD: admin
+      DATABASE_SERVER: db-advertisement
+      DATABASE_PASSWORD: My_password123
+      DATABASE_PORT: "1433"
     ports:
       - '8082:80'
     depends_on:
@@ -62,6 +65,19 @@ services:
       - rabbitmq
     networks:
       - lplace-network
+
+  db-user:
+    image: "mcr.microsoft.com/mssql/server"
+    container_name: db-user
+    environment:
+        SA_PASSWORD: "My_Other_password123"
+        ACCEPT_EULA: "Y"
+    networks:
+      - lplace-network
+    ports:
+      - "1433:1433"
+    volumes:
+      - database-data-user:/var/opt/mssql
 
   service-user:
     image: ${DOCKER_REGISTRY-}serviceuser
@@ -72,6 +88,9 @@ services:
     environment:
         RABBITMQ_USERNAME: sa
         RABBITMQ_PASSWORD: admin
+        DATABASE_SERVER: db-user
+        DATABASE_PASSWORD: My_Other_password123
+        DATABASE_PORT: "1433"
     ports:
       - '8084:80'
     depends_on:
@@ -83,7 +102,8 @@ services:
 
 
 volumes:
-    database-data:
+    database-data-user:
+    database-data-advertisement:
 
 networks:
   lplace-network:

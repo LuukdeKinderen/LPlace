@@ -6,8 +6,7 @@ using Service_User.Database;
 var builder = WebApplication.CreateBuilder(args);
 
 //Database
-var connection = builder.Configuration.GetConnectionString("DefaultConnection");
-builder.Services.AddDbContext<UserContext>(options => options.UseSqlServer(connection));
+builder.Services.AddDbContext<UserContext>(options => options.UseSqlServer(Global.DatabaseConnectionString));
 
 //Swagger
 builder.Services.AddEndpointsApiExplorer();
