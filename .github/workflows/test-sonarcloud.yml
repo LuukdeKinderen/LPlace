@@ -2,7 +2,8 @@ name: Test SonarCloud
 on:
   push:
     branches:
-      - master
+      - main
+      - dev
   pull_request:
     types: [opened, synchronize, reopened]
 jobs:
