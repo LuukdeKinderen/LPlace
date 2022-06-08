@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: advertisement-deployment
+  namespace: lplace
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: service-advertisement
+  template:
+    metadata:
+      labels:
+        app: service-advertisement
+    spec:
+      containers:
+        - name: service-advertisement
+          image: ghcr.io/luukdekinderen/lplace/service-advertisement:main
+          imagePullPolicy: Always
+          env:
+          - name: RABBITMQ_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: rabbitmq
+                key: RABBITMQ_USERNAME
+          - name: RABBITMQ_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: rabbitmq
+                key: RABBITMQ_PASSWORD
+          - name: DATABASE_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: db-advertisement
+                key: SA_PASSWORD
+          - name: DATABASE_SERVER
+            value: db-advertisement
+          - name: DATABASE_PORT
+            value: "1433"
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-advertisement
+spec:
+  type: ClusterIP
+  selector:
+    app: service-advertisement
+  ports:
+  - name: service-advertisement
+    protocol: TCP
+    port: 80
+    targetPort: 80

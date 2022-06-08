@@ -61,7 +61,7 @@ services:
     ports:
       - '8082:80'
     depends_on:
-      - db
+      - db-advertisement
       - rabbitmq
     networks:
       - lplace-network
@@ -94,7 +94,7 @@ services:
     ports:
       - '8084:80'
     depends_on:
-      - db
+      - db-user
       - rabbitmq
     networks:
       - lplace-network

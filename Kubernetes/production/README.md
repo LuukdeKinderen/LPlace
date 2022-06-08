@@ -30,3 +30,18 @@ kubectl apply -f advertisement-mssql-deployment.yaml
 ```
 kubectl apply -f user-mssql-deployment.yaml
 ```
+# Create service buss
+```
+kubectl apply -f rabbitmq-deployment.yaml
+```
+# Create gateway
+```
+kubectl apply -f gateway-deployment.yaml
+```
+# Create services
+```
+kubectl apply -f advertisement-deployment.yaml
+```
+```
+kubectl apply -f user-deployment.yaml
+```
