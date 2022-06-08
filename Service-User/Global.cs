@@ -9,7 +9,7 @@
         private static readonly string DatabasePassword = Environment.GetEnvironmentVariable("DATABASE_PASSWORD");
         private static readonly string DatabasePort = Environment.GetEnvironmentVariable("DATABASE_PORT");
 
-        public static readonly string DatabaseConnectionString = $"Server={DatabaseServer},{DatabasePort};Database=advertisement;User Id=sa;Password={DatabasePassword};";
+        public static readonly string DatabaseConnectionString = $"Server={DatabaseServer},{DatabasePort};Database=master;User Id=sa;Password={DatabasePassword};";
 
     }
 }

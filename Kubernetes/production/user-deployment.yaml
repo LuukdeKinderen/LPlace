@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-deployment
+  namespace: lplace
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: service-user
+  template:
+    metadata:
+      labels:
+        app: service-user
+    spec:
+      containers:
+        - name: service-user
+          image: ghcr.io/luukdekinderen/lplace/service-user:main
+          imagePullPolicy: Always
+          env:
+          - name: RABBITMQ_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: rabbitmq
+                key: RABBITMQ_USERNAME
+          - name: RABBITMQ_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: rabbitmq
+                key: RABBITMQ_PASSWORD
+          - name: DATABASE_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: db-user
+                key: SA_PASSWORD
+          - name: DATABASE_SERVER
+            value: db-user
+          - name: DATABASE_PORT
+            value: "1433"
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-user
+spec:
+  type: ClusterIP
+  selector:
+    app: service-user
+  ports:
+  - name: service-user
+    protocol: TCP
+    port: 80
+    targetPort: 80
