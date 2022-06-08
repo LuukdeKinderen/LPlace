@@ -45,7 +45,7 @@ kind: Service
 metadata:
   name: service-advertisement
 spec:
-  type: ClusterIP
+  # type: ClusterIP
   selector:
     app: service-advertisement
   ports:
@@ -53,3 +53,4 @@ spec:
     protocol: TCP
     port: 80
     targetPort: 80
+  clusterIP: None
