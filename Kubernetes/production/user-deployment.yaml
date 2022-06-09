@@ -5,6 +5,12 @@ metadata:
   namespace: lplace
 spec:
   replicas: 1
+  minReadySeconds: 10
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
   selector:
     matchLabels:
       app: service-user
@@ -13,6 +19,7 @@ spec:
       labels:
         app: service-user
     spec:
+      hostname: service-user
       containers:
         - name: service-user
           image: ghcr.io/luukdekinderen/lplace/service-user:main
@@ -37,6 +44,15 @@ spec:
             value: db-user
           - name: DATABASE_PORT
             value: "1433"
+          ports:
+          - containerPort: 80
+          resources:
+            requests:
+              memory: 128Mi
+              cpu: 100m
+            limits:
+              memory: 256Mi
+              cpu: 250m
 
 ---
 
@@ -44,13 +60,27 @@ apiVersion: v1
 kind: Service
 metadata:
   name: service-user
+  namespace: lplace
+  labels:
+    app: service-user
 spec:
-  # type: ClusterIP
+  ports:
+  - port: 80
   selector:
     app: service-user
-  ports:
-  - name: service-user
-    protocol: TCP
-    port: 80
-    targetPort: 80
-  clusterIP: None
+
+---
+
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: user-autoscaler
+  namespace: lplace
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: user-deployment
+  minReplicas: 1
+  maxReplicas: 5
+  targetCPUUtilizationPercentage: 75  

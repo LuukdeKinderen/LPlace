@@ -24,7 +24,7 @@ kubectl apply -f advertisement-mssql-svc.yaml
 ```
 kubectl apply -f user-mssql-svc.yaml
 ```
-# Create database state full services
+# Create database state full sets
 ```
 kubectl apply -f advertisement-mssql-sfs.yaml
 ```
