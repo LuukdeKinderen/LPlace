@@ -16,32 +16,36 @@ kubectl apply -f namespace.yaml
 ```
 kubectl apply -f storageclass.yaml
 ```
-# Create volume claims
+
+# Create database services
 ```
-kubectl apply -f advertisement-pvc.yaml
-```
-```
-kubectl apply -f user-pvc.yaml
-```
-# Create databases
-```
-kubectl apply -f advertisement-mssql-deployment.yaml
+kubectl apply -f advertisement-mssql-svc.yaml
 ```
 ```
-kubectl apply -f user-mssql-deployment.yaml
+kubectl apply -f user-mssql-svc.yaml
 ```
-# Create service buss
+# Create database state full sets
+```
+kubectl apply -f advertisement-mssql-sfs.yaml
+```
+```
+kubectl apply -f user-mssql-sfs.yaml
+```
+
+# Create service bus
 ```
 kubectl apply -f rabbitmq-deployment.yaml
 ```
-# Create gateway
-```
-kubectl apply -f gateway-deployment.yaml
-```
+
 # Create services
 ```
 kubectl apply -f advertisement-deployment.yaml
 ```
 ```
 kubectl apply -f user-deployment.yaml
+```
+
+# Create gateway
+```
+kubectl apply -f gateway-deployment.yaml
 ```

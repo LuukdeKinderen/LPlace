@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  namespace: lplace
+  name: user-mssql-sfs
+spec:
+  selector:
+    matchLabels:
+      app: db-user
+  serviceName: "db-user"
+  replicas: 2 
+  template:
+    metadata:
+      labels:
+        app: db-user
+    spec:
+      terminationGracePeriodSeconds: 10
+      securityContext:
+        fsGroup: 10001
+      containers:
+      - name: db-user
+        image:  mcr.microsoft.com/mssql/server:2019-latest
+        env:
+        - name: ACCEPT_EULA
+          value: "Y"
+        - name: SA_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: db-user
+              key: SA_PASSWORD
+        ports:
+        - containerPort: 1433
+        volumeMounts:
+        - name: data
+          mountPath: /var/opt/mssql/data
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+      annotations:
+        volume.beta.kubernetes.io/storage-class: azure-disk
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: azure-disk
+      resources:
+        requests:
+          storage: 1Gi
