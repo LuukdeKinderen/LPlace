@@ -50,6 +50,7 @@ services:
       context: .
       dockerfile: Service-Advertisement/Dockerfile
     environment:
+      PRODUCTION: "false"
       RABBITMQ_USERNAME: sa
       RABBITMQ_PASSWORD: admin
       DATABASE_SERVER: db-advertisement
@@ -83,6 +84,7 @@ services:
       context: .
       dockerfile: Service-User/Dockerfile
     environment:
+        PRODUCTION: "false"
         RABBITMQ_USERNAME: sa
         RABBITMQ_PASSWORD: admin
         DATABASE_SERVER: db-user

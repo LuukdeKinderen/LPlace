@@ -9,6 +9,8 @@ using Service_Advertisement.DTO.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
+bool production = Convert.ToBoolean(Environment.GetEnvironmentVariable("PRODUCTION"));
+
 //Services
 builder.Services.AddTransient<IAdvertisementResponseFactory, AdvertisementResponseFactory>();
 
@@ -19,8 +21,11 @@ builder.Services.AddTransient<IAdvertisementRepository, AdvertisementRepository>
 builder.Services.AddDbContext<AdvertisementContext>(options => options.UseSqlServer(Global.DatabaseConnectionString));
 
 //Swagger
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+if (!production)
+{
+    builder.Services.AddEndpointsApiExplorer();
+    builder.Services.AddSwaggerGen();
+}
 
 //RabbitMQ
 builder.Services.AddMassTransit(config =>
@@ -39,9 +44,11 @@ builder.Services.AddControllers();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-
-app.UseSwagger();
-app.UseSwaggerUI();
+if (!production)
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
 
 app.UseAuthorization();
 
