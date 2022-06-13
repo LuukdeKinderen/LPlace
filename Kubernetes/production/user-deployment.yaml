@@ -50,11 +50,11 @@ spec:
           - containerPort: 80
           resources:
             requests:
-              memory: 50Mi
-              cpu: 500m
+              memory: 128Mi
+              cpu: 100m
             limits:
-              memory: 500Mi
-              cpu: 2000m
+              memory: 256Mi
+              cpu: 250m
 ---
 
 apiVersion: v1
@@ -84,4 +84,4 @@ spec:
     name: user-deployment
   minReplicas: 1
   maxReplicas: 5
-  targetCPUUtilizationPercentage: 75  
+  targetCPUUtilizationPercentage: 50  

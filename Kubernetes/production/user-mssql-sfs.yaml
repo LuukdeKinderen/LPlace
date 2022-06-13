@@ -8,7 +8,7 @@ spec:
     matchLabels:
       app: db-user
   serviceName: "db-user"
-  replicas: 2 
+  replicas: 3 
   template:
     metadata:
       labels:
