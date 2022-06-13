@@ -25,6 +25,8 @@ spec:
           image: ghcr.io/luukdekinderen/lplace/service-advertisement:main
           imagePullPolicy: Always
           env:
+          - name: PRODUCTION
+            value: "TRUE"
           - name: RABBITMQ_USERNAME
             valueFrom:
               secretKeyRef:
@@ -48,11 +50,11 @@ spec:
           - containerPort: 80
           resources:
             requests:
-              memory: 128Mi
-              cpu: 100m
+              memory: 50Mi
+              cpu: 500m
             limits:
-              memory: 256Mi
-              cpu: 250m
+              memory: 500Mi
+              cpu: 2000m
             
 ---
 

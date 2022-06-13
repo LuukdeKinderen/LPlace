@@ -5,13 +5,17 @@ using Service_User.Database;
 
 var builder = WebApplication.CreateBuilder(args);
 
+bool production = Convert.ToBoolean(Environment.GetEnvironmentVariable("PRODUCTION"));
+
 //Database
 builder.Services.AddDbContext<UserContext>(options => options.UseSqlServer(Global.DatabaseConnectionString));
 
 //Swagger
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
+if (!production)
+{
+    builder.Services.AddEndpointsApiExplorer();
+    builder.Services.AddSwaggerGen();
+}
 //RabbitMQ
 builder.Services.AddMassTransit(config =>
 {
@@ -28,8 +32,11 @@ var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 
-app.UseSwagger();
-app.UseSwaggerUI();
+if (!production)
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
 
 app.UseAuthorization();
 
