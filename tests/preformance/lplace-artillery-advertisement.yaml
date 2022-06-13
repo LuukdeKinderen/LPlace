@@ -1,0 +1,26 @@
+config:
+  target: "http://20.79.83.214/"
+  # Advertisement url
+  phases:
+    - duration: 60
+      arrivalRate: 10
+      name: Warm up
+    - duration: 120
+      arrivalRate: 100
+      rampTo: 7000
+      name: Ramp up load
+    - duration: 600
+      arrivalRate: 7000
+      name: Sustained load
+  ensure:
+    p95: 100
+    p99: 250
+    conditions:
+      - expression: "http.request_rate > 6000"
+    maxErrorRate: 1
+
+scenarios:
+  - name: "Get advertisements"
+    flow:
+      - get:
+          url: "/test"
